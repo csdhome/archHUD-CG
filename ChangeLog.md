@@ -1,5 +1,12 @@
 ## ChangeLog - Most recent changes at the top
 
+ArchHud - Consortium v2.105-CG
+- All Consortium planets and moons in the atlas (including Prime planets, CG meganodes, Consortium Home World)
+- Fuel tank support for XS through XXL sizes, tiers T1-T5, Standard/Optimised/Gravity-Inverted
+- Speed limits set to 50,000 km/h (server max)
+- Safe zone radius: 64,000,000 meters
+- Space engine minimum altitudes for all Consortium atmospheric bodies
+
 Version 2.105 - MyDU update and bug fixes
 - Implement calculations for the anti-gravity fuel tank.
 - Resolve issues with Lua property saving and duplication.
