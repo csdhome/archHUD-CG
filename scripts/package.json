@@ -1,0 +1,10 @@
+{
+    "name": "Archhud",
+    "dependencies": {
+        "lua-in-js": "^2.2.5",
+        "luamin": "1.0.4"
+    },
+    "devDependencies": {
+        "lua-fmt": "^2.6.0"
+    }
+}
