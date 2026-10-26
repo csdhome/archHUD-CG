@@ -1,5 +1,5 @@
 ## How to Install
 
-Please see the [User manual](https://docs.google.com/document/d/13-Kz1pqbbIHq8HTFLVG1r58D9zxsJe8_eTXezuryfPg/edit?usp=sharing) for installation and details on use
+Extract `ArchHUD.zip` into `C:\ProgramData\My Dual Universe\Game\data\lua\autoconf\custom\`, then install the Consortium atlas from [atlas-CG](https://github.com/csdhome/atlas-CG). See [INSTALL.md](https://github.com/csdhome/archHUD-CG/blob/main/INSTALL.md) for full instructions and troubleshooting.
 
 # Latest Changes

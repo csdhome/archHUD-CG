@@ -75,3 +75,14 @@ function AxisCommand.composeAxisAccelerationFromThrottle(self, tags)
 
     return finalAcceleration
 end
+
+-- The MyDU client's AxisCommandManager clamps to targetGroundAltitudeCapabilities[1], which errors if the
+-- control unit reports no ground engine capabilities. Only clamp when the capability is known.
+function AxisCommandManager.setTargetGroundAltitude(self, targetAltitude)
+    local caps = self.targetGroundAltitudeCapabilities
+    if type(caps) == "table" and type(caps[1]) == "number" then
+        targetAltitude = utils.clamp(targetAltitude, 0, caps[1])
+    end
+    self.targetGroundAltitude = targetAltitude
+    self:updateGroundEngineAltitudeStabilization()
+end

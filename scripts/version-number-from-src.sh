@@ -8,7 +8,7 @@ ROOTDIR="$(dirname $DIR)"
 
 LUA_SRC=${1:-$ROOTDIR/src/ArchHUD.lua}
 
-VERSION_NUMBER=`grep "VERSION_NUMBER = .*" $LUA_SRC | sed -E "s/\s*VERSION_NUMBER = (.*)/\1/"`
+VERSION_NUMBER=`grep "VERSION_NUMBER = .*" $LUA_SRC | sed -E 's/\s*VERSION_NUMBER = "?([0-9a-zA-Z.\-]*)"?[\r\n]*/\1/'`
 if [[ "${VERSION_NUMBER}" == "" ]]; then
     echo "ERROR: Failed to detect version number" 2>&1; exit 1
 fi

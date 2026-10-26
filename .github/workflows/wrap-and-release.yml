@@ -1,44 +1,49 @@
 name: Wrap and Release
 on:
   push:
-    branches: master
+    branches: main
+  workflow_dispatch:
+permissions:
+  contents: write
 jobs:
   wrap-and-release:
     runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v5
 
       - name: Detect Version Number
-        if: github.ref == 'refs/heads/master'  # ONLY ON MASTER
+        run: echo "VERSION_NUMBER=$(bash ./scripts/version-number-from-src.sh)" >> $GITHUB_ENV
+
+      - name: Check For Existing Release
+        id: check
         run: |
-          ./scripts/version-number-from-src.sh
-          echo "VERSION_NUMBER=$( ./scripts/version-number-from-src.sh )" >> $GITHUB_ENV
+          if gh release view "v${VERSION_NUMBER}" > /dev/null 2>&1; then
+            echo "::notice::Release v${VERSION_NUMBER} already exists. Bump VERSION_NUMBER in src/ArchHUD.lua to publish a new release."
+            echo "exists=true" >> $GITHUB_OUTPUT
+          fi
 
       - name: Create Release Notes
-        if: github.ref == 'refs/heads/master'  # ONLY ON MASTER
+        if: steps.check.outputs.exists != 'true'
         run: |
           cat ./scripts/ReleaseNotesTemplate.md > ReleaseNotes.md
-          ./scripts/latest-changes.sh >> ReleaseNotes.md
+          bash ./scripts/latest-changes.sh >> ReleaseNotes.md
+
+      # Zip layout mirrors autoconf/custom so players can extract it in place
+      - name: Package ArchHUD.zip
+        if: steps.check.outputs.exists != 'true'
+        run: |
+          mkdir -p package/archhud/custom
+          cp ArchHUD.conf package/
+          cp src/requires/*.lua src/requires/*.example src/requires/*.sample package/archhud/
+          cp src/requires/custom/* package/archhud/custom/
+          (cd package && zip -r ../ArchHUD.zip .)
 
       - name: Create Release
-        if: github.ref == 'refs/heads/master'  # ONLY ON MASTER
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: v${{ env.VERSION_NUMBER }}
-          release_name: Release v${{ env.VERSION_NUMBER }}
-          body_path: ReleaseNotes.md
-
-      - name: Upload Autoconf as Release Asset
-        if: github.ref == 'refs/heads/master'  # ONLY ON MASTER
-        id: upload-autoconf
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above
-          asset_path: ./ArchHUD.zip
-          asset_name: ArchHUD.zip
-          asset_content_type: text/yaml
+        if: steps.check.outputs.exists != 'true'
+        run: |
+          gh release create "v${VERSION_NUMBER}" ArchHUD.zip \
+            --title "Release v${VERSION_NUMBER}" \
+            --notes-file ReleaseNotes.md \
+            --target "${GITHUB_SHA}"

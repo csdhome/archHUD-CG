@@ -1,5 +1,9 @@
 ## ChangeLog - Most recent changes at the top
 
+ArchHud - Consortium v2.106-CG - MyDU client 1.4.19 fixes
+- Atlas and module load failures are now reported in lua chat instead of being silently ignored (a corrupt or missing atlas.lua previously left the vanilla HUD up with no clear error)
+- Guard against the client's new ground altitude clamp erroring when no ground engine capabilities are reported
+
 ArchHud - Consortium v2.105-CG
 - All Consortium planets and moons in the atlas (including Prime planets, CG meganodes, Consortium Home World)
 - Fuel tank support for XS through XXL sizes, tiers T1-T5, Standard/Optimised/Gravity-Inverted
